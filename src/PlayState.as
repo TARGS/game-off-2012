@@ -11,7 +11,7 @@ package
 		public var background:FlxSprite;
 		public var board:FlxSprite;
 		public var floor:FlxTileblock;
-		public var piece:FlxExtendedSprite;
+		public var piece:Piece;
 		public var pieces:FlxGroup;
 		public var piecesArray:Array;
 		
@@ -109,25 +109,13 @@ package
 		}
 		
 		// Creates a piece inside a specified grid position (X, Y)
-		public function createPiece(X:uint,Y:uint):void
+		public function createPiece(X:uint,Y:uint, heightOffset:uint=0):void
 		{
-			// An array of colours to choose from when generating a gamepiece
-			// Temporary until I can get sprites to work with
-			var color:Array = new Array(ImgCarrot, ImgEggplant, ImgMelon, ImgMushroom, ImgOnion, ImgPineapple);
-			
 			// NOTE FOR JON: Find a way to randomize this but also check that it doesn't form a match-3 on start
-			piece = new FlxExtendedSprite(X*25+110, Y*25+50);
-			piece.height = 25;
-			piece.width = 25;
-			var graphic:int = Math.floor(Math.random() * color.length);
-			piece.loadGraphic(color[graphic], false, false);
-			//piece.makeGraphic(25, 25, color[Math.floor(Math.random() * color.length)]);
+			piece = new Piece(X*25+110, Y*25+50-heightOffset);
 			piece.enableMouseClicks(false);
 			piece.mouseReleasedCallback = pieceClicked;
-			//piece.acceleration.y = 20;
-			piece.solid = true;
 			pieces.add(piece);
-			//piecesArray.push([[X, Y], graphic, piece]);
 			piecesArray[X][Y] = piece;
 			//FlxG.log("Successfully added piece at (" + X + ", " + Y + "): " + piecesArray[X][Y]);
 		}
@@ -157,16 +145,17 @@ package
 				secondPieceY = (secondPiece.y - 50)/25;
 				
 				if (
-					((firstPieceX - secondPieceX) == 1 || -1 && (firstPieceY - secondPieceY) == 0) ||
-					((firstPieceX - secondPieceX) == 0 && (firstPieceY - secondPieceY) == 1 || -1)
+					(((firstPieceX - secondPieceX) == 1 || -1) && (firstPieceY - secondPieceY) == 0) ||
+					((firstPieceX - secondPieceX) == 0 && ((firstPieceY - secondPieceY) == 1 || -1))
 					)
 				{	
+					TweenLite.to(firstPiece, 0.5, {x: secondPiece.x, y: secondPiece.y, ease:Bounce.easeOut});
+					TweenLite.to(secondPiece, 0.5, {x: firstPiece.x, y: firstPiece.y, ease:Bounce.easeOut, onComplete:matchingCheck});
+					
 					_tempSprite = piecesArray[secondPieceX][secondPieceY];
 					piecesArray[secondPieceX][secondPieceY] = piecesArray[firstPieceX][firstPieceY];
 					piecesArray[firstPieceX][firstPieceY] = _tempSprite;
-					
-					TweenLite.to(firstPiece, 0.5, {x: secondPiece.x, y: secondPiece.y, ease:Bounce.easeOut});
-					TweenLite.to(secondPiece, 0.5, {x: firstPiece.x, y: firstPiece.y, ease:Bounce.easeOut});
+					//FlxG.log("Switching piecesArray[" + firstPieceX + "][" + firstPieceY + "] and piecesArray[" + secondPieceX + "][" + secondPieceY + "]");
 					
 					//matchingCheck();
 				}
@@ -189,47 +178,38 @@ package
 		private function checkRows():void
 		{
 			var rowNum:int;
-			for (rowNum = 0; rowNum <= 30; rowNum+=5) {
+			for (rowNum = 0; rowNum <= 6; rowNum++) {
 				var pieceGraphic:int;
 				for (pieceGraphic = 0; pieceGraphic <= 5; pieceGraphic++) {
-					if (piecesArray[rowNum][1] == pieceGraphic && piecesArray[rowNum+1][1] == pieceGraphic && piecesArray[rowNum+2][1] == pieceGraphic) {
-						//FlxG.log("Yay! Matching pieces on row " + rowNum + ", on piecesArray: " + rowNum + ", " + (rowNum+1) + ", " + (rowNum+2) + " with graphic: " + pieceGraphic);
-						//FlxG.log("Match! Kill: " + rowNum + ", " + (rowNum+1) + ", " + (rowNum+2));
-						//FlxG.log("Pieces:" + piecesArray[rowNum][1] + ", " + piecesArray[rowNum+1][1] + ", " + piecesArray[rowNum+2][1]);
-						
+					if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic) {
 						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						pieces.remove(piecesArray[rowNum][2]);
-						pieces.remove(piecesArray[rowNum+1][2]);
-						pieces.remove(piecesArray[rowNum+2][2]);
-						piecesArray[rowNum][2].destroy();
-						piecesArray[rowNum+1][2].destroy();
-						piecesArray[rowNum+2][2].destroy();
+						pieces.remove(piecesArray[0][rowNum]);
+						pieces.remove(piecesArray[1][rowNum]);
+						pieces.remove(piecesArray[2][rowNum]);
+						piecesArray[0][rowNum].destroy();
+						piecesArray[1][rowNum].destroy();
+						piecesArray[2][rowNum].destroy();
+						rowClear(0, rowNum);
 					}
-					else if (piecesArray[rowNum+1][1] == pieceGraphic && piecesArray[rowNum+2][1] == pieceGraphic && piecesArray[rowNum+3][1] == pieceGraphic) {
-						//FlxG.log("Yay! Matching pieces on row " + rowNum + ", on piecesArray: " + (rowNum+1) + ", " + (rowNum+2) + ", " + (rowNum+3) + " with graphic: " + pieceGraphic);
-						//FlxG.log("Match! Kill: " + (rowNum+1) + ", " + (rowNum+2) + ", " + (rowNum+3));
-						//FlxG.log("Pieces:" + piecesArray[rowNum+1][1] + ", " + piecesArray[rowNum+2][1] + ", " + piecesArray[rowNum+3][1]);
-						
+					else if (piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic) {
 						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						pieces.remove(piecesArray[rowNum+1][2]);
-						pieces.remove(piecesArray[rowNum+2][2]);
-						pieces.remove(piecesArray[rowNum+3][2]);
-						piecesArray[rowNum+1][2].destroy();
-						piecesArray[rowNum+2][2].destroy();
-						piecesArray[rowNum+3][2].destroy();
+						pieces.remove(piecesArray[1][rowNum]);
+						pieces.remove(piecesArray[2][rowNum]);
+						pieces.remove(piecesArray[3][rowNum]);
+						piecesArray[1][rowNum].destroy();
+						piecesArray[2][rowNum].destroy();
+						piecesArray[3][rowNum].destroy();
+						rowClear(1, rowNum);
 					}
-					else if (piecesArray[rowNum+2][1] == pieceGraphic && piecesArray[rowNum+3][1] == pieceGraphic && piecesArray[rowNum+4][1] == pieceGraphic) {
-						//FlxG.log("Yay! Matching pieces on row " + rowNum + ", on piecesArray: " + (rowNum+2) + ", " + (rowNum+3) + ", " + (rowNum+4) + " with graphic: " + pieceGraphic);
-						//FlxG.log("Match! Kill: " + (rowNum+2) + ", " + (rowNum+3) + ", " + (rowNum+4));
-						//FlxG.log("Pieces:" + piecesArray[rowNum+2][1] + ", " + piecesArray[rowNum+3][1] + ", " + piecesArray[rowNum+4][1]);
-						
+					else if (piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic) {
 						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						pieces.remove(piecesArray[rowNum+2][2]);
-						pieces.remove(piecesArray[rowNum+3][2]);
-						pieces.remove(piecesArray[rowNum+4][2]);
-						piecesArray[rowNum+2][2].destroy();
-						piecesArray[rowNum+3][2].destroy();
-						piecesArray[rowNum+4][2].destroy();
+						pieces.remove(piecesArray[2][rowNum]);
+						pieces.remove(piecesArray[3][rowNum]);
+						pieces.remove(piecesArray[4][rowNum]);
+						piecesArray[2][rowNum].destroy();
+						piecesArray[3][rowNum].destroy();
+						piecesArray[4][rowNum].destroy();
+						rowClear(2, rowNum);
 					}
 				}
 			}
@@ -243,63 +223,90 @@ package
 			for (colNum = 0; colNum <= 4; colNum++) {
 				var pieceGraphic:int;
 				for (pieceGraphic = 0; pieceGraphic <= 5; pieceGraphic++) {
-					if (piecesArray[colNum][1] == pieceGraphic && piecesArray[colNum+5][1] == pieceGraphic && piecesArray[colNum+10][1] == pieceGraphic) {
-						//FlxG.log("Yay! Matching pieces on column " + colNum + ", on piecesArray: " + colNum + ", " + (colNum+5) + ", " + (colNum+10) + " with graphic: " + pieceGraphic);
-						
+					if (piecesArray[colNum][0].sprite == pieceGraphic && piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic) {
+						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
+						pieces.remove(piecesArray[colNum][0]);
+						pieces.remove(piecesArray[colNum][1]);
+						pieces.remove(piecesArray[colNum][2]);
+						piecesArray[colNum][0].destroy();
+						piecesArray[colNum][1].destroy();
+						piecesArray[colNum][2].destroy();
+						colClear(colNum, 2);
+					}
+					else if (piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic) {
+						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
+						pieces.remove(piecesArray[colNum][1]);
+						pieces.remove(piecesArray[colNum][2]);
+						pieces.remove(piecesArray[colNum][3]);
+						piecesArray[colNum][1].destroy();
+						piecesArray[colNum][2].destroy();
+						piecesArray[colNum][3].destroy();
+						colClear(colNum, 3);
+					}
+					else if (piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic) {
 						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
 						pieces.remove(piecesArray[colNum][2]);
-						pieces.remove(piecesArray[colNum+5][2]);
-						pieces.remove(piecesArray[colNum+10][2]);
+						pieces.remove(piecesArray[colNum][3]);
+						pieces.remove(piecesArray[colNum][4]);
 						piecesArray[colNum][2].destroy();
-						piecesArray[colNum+5][2].destroy();
-						piecesArray[colNum+10][2].destroy();
+						piecesArray[colNum][3].destroy();
+						piecesArray[colNum][4].destroy();
+						colClear(colNum, 4);
 					}
-					else if (piecesArray[colNum+5][1] == pieceGraphic && piecesArray[colNum+10][1] == pieceGraphic && piecesArray[colNum+15][1] == pieceGraphic) {
-						//FlxG.log("Yay! Matching pieces on column " + colNum + ", on piecesArray: " + (colNum+5) + ", " + (colNum+10) + ", " + (colNum+15) + " with graphic: " + pieceGraphic);
-						
+					else if (piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic) {
 						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						pieces.remove(piecesArray[colNum+5][2]);
-						pieces.remove(piecesArray[colNum+10][2]);
-						pieces.remove(piecesArray[colNum+15][2]);
-						piecesArray[colNum+5][2].destroy();
-						piecesArray[colNum+10][2].destroy();
-						piecesArray[colNum+15][2].destroy();
+						pieces.remove(piecesArray[colNum][3]);
+						pieces.remove(piecesArray[colNum][4]);
+						pieces.remove(piecesArray[colNum][5]);
+						piecesArray[colNum][3].destroy();
+						piecesArray[colNum][4].destroy();
+						piecesArray[colNum][5].destroy();
+						colClear(colNum, 5);
 					}
-					else if (piecesArray[colNum+10][1] == pieceGraphic && piecesArray[colNum+15][1] == pieceGraphic && piecesArray[colNum+20][1] == pieceGraphic) {
-						//FlxG.log("Yay! Matching pieces on column " + colNum + ", on piecesArray: " + (colNum+10) + ", " + (colNum+15) + ", " + (colNum+20) + " with graphic: " + pieceGraphic);
-						
+					else if (piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic && piecesArray[colNum][6].sprite == pieceGraphic) {
 						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						pieces.remove(piecesArray[colNum+10][2]);
-						pieces.remove(piecesArray[colNum+15][2]);
-						pieces.remove(piecesArray[colNum+20][2]);
-						piecesArray[colNum+10][2].destroy();
-						piecesArray[colNum+15][2].destroy();
-						piecesArray[colNum+20][2].destroy();
-					}
-					else if (piecesArray[colNum+15][1] == pieceGraphic && piecesArray[colNum+20][1] == pieceGraphic && piecesArray[colNum+25][1] == pieceGraphic) {
-						//FlxG.log("Yay! Matching pieces on column " + colNum + ", on piecesArray: " + (colNum+15) + ", " + (colNum+20) + ", " + (colNum+25) + " with graphic: " + pieceGraphic);
-						
-						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						pieces.remove(piecesArray[colNum+15][2]);
-						pieces.remove(piecesArray[colNum+20][2]);
-						pieces.remove(piecesArray[colNum+25][2]);
-						piecesArray[colNum+15][2].destroy();
-						piecesArray[colNum+20][2].destroy();
-						piecesArray[colNum+25][2].destroy();
-					}
-					else if (piecesArray[colNum+20][1] == pieceGraphic && piecesArray[colNum+25][1] == pieceGraphic && piecesArray[colNum+30][1] == pieceGraphic) {
-						//FlxG.log("Yay! Matching pieces on column " + colNum + ", on piecesArray: " + (colNum+20) + ", " + (colNum+25) + ", " + (colNum+30) + " with graphic: " + pieceGraphic);
-						
-						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						pieces.remove(piecesArray[colNum+20][2]);
-						pieces.remove(piecesArray[colNum+25][2]);
-						pieces.remove(piecesArray[colNum+30][2]);
-						piecesArray[colNum+20][2].destroy();
-						piecesArray[colNum+25][2].destroy();
-						piecesArray[colNum+30][2].destroy();
+						pieces.remove(piecesArray[colNum][4]);
+						pieces.remove(piecesArray[colNum][5]);
+						pieces.remove(piecesArray[colNum][6]);
+						piecesArray[colNum][4].destroy();
+						piecesArray[colNum][5].destroy();
+						piecesArray[colNum][6].destroy();
+						colClear(colNum, 6);
 					}
 				}
 			}
+		}
+		
+		private function rowClear(startCol:int, rowNum:int):void 
+		{
+			for (var aboveRows:int = rowNum-1; aboveRows >= 0; aboveRows--) {
+				TweenLite.to(piecesArray[startCol][aboveRows], 0.5, {x: piecesArray[startCol][aboveRows].x, y: piecesArray[startCol][aboveRows].y+25, ease:Bounce.easeOut});
+				TweenLite.to(piecesArray[startCol+1][aboveRows], 0.5, {x: piecesArray[startCol+1][aboveRows].x, y: piecesArray[startCol+1][aboveRows].y+25, ease:Bounce.easeOut});
+				TweenLite.to(piecesArray[startCol+2][aboveRows], 0.5, {x: piecesArray[startCol+2][aboveRows].x, y: piecesArray[startCol+2][aboveRows].y+25, ease:Bounce.easeOut});
+				piecesArray[startCol][aboveRows+1] = piecesArray[startCol][aboveRows];
+				piecesArray[startCol+1][aboveRows+1] = piecesArray[startCol+1][aboveRows];
+				piecesArray[startCol+2][aboveRows+1] = piecesArray[startCol+2][aboveRows];
+			}
+			createPiece(startCol, 0, 25);
+			createPiece(startCol+1, 0, 25);
+			createPiece(startCol+2, 0, 25);
+			TweenLite.to(piecesArray[startCol][0], 0.5, {x: piecesArray[startCol][0].x, y: piecesArray[startCol][0].y+25, ease:Bounce.easeOut});
+			TweenLite.to(piecesArray[startCol+1][0], 0.5, {x: piecesArray[startCol+1][0].x, y: piecesArray[startCol+1][0].y+25, ease:Bounce.easeOut});
+			TweenLite.to(piecesArray[startCol+2][0], 0.5, {x: piecesArray[startCol+2][0].x, y: piecesArray[startCol+2][0].y+25, ease:Bounce.easeOut});
+		}
+		
+		private function colClear(startCol:int, rowNum:int):void 
+		{
+			for (var aboveRows:int = rowNum-3; aboveRows >= 0; aboveRows--) {
+				TweenLite.to(piecesArray[startCol][aboveRows], 0.5, {x: piecesArray[startCol][aboveRows].x, y: piecesArray[startCol][aboveRows+3].y, ease:Bounce.easeOut});
+				piecesArray[startCol][aboveRows+3] = piecesArray[startCol][aboveRows];
+			}
+			createPiece(startCol, 0, 25);
+			createPiece(startCol, 1, 50);
+			createPiece(startCol, 2, 75);
+			TweenLite.to(piecesArray[startCol][0], 0.5, {x: piecesArray[startCol][0].x, y: piecesArray[startCol][0].y+25, ease:Bounce.easeOut});
+			TweenLite.to(piecesArray[startCol][1], 0.5, {x: piecesArray[startCol][1].x, y: piecesArray[startCol][1].y+50, ease:Bounce.easeOut});
+			TweenLite.to(piecesArray[startCol][2], 0.5, {x: piecesArray[startCol][2].x, y: piecesArray[startCol][2].y+75, ease:Bounce.easeOut});
 		}
 		
 		override public function update():void
