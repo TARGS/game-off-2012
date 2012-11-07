@@ -15,6 +15,8 @@ package
 		[Embed(source="data/mushroom.png")] protected var ImgMushroom:Class;
 		[Embed(source="data/onion.png")] protected var ImgOnion:Class;
 		[Embed(source="data/pineapple.png")] protected var ImgPineapple:Class;
+		[Embed(source="data/cog_base_25px.png")] protected var ImgCog:Class;
+		[Embed(source="data/flask_base_25px.png")] protected var ImgFlask:Class;
 		
 		public function Piece(X:Number=0, Y:Number=0, SimpleGraphic:Class=null)
 		{
@@ -22,7 +24,7 @@ package
 			
 			// An array of colours to choose from when generating a gamepiece
 			// Temporary until I can get sprites to work with
-			var color:Array = new Array(ImgCarrot, ImgEggplant, ImgMelon, ImgMushroom, ImgOnion, ImgPineapple);
+			var color:Array = new Array(ImgCarrot, ImgEggplant, ImgMelon, ImgMushroom, ImgCog, ImgFlask);
 			
 			height = 25;
 			width = 25;
