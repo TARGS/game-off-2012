@@ -17,18 +17,18 @@ package
 		[Embed(source="data/pineapple.png")] protected var ImgPineapple:Class;
 		[Embed(source="data/cog_base_25px.png")] protected var ImgCog:Class;
 		[Embed(source="data/flask_base_25px.png")] protected var ImgFlask:Class;
+		[Embed(source="data/chip_base_25px.png")] protected var ImgChip:Class;
 		
-		public function Piece(X:Number=0, Y:Number=0, SimpleGraphic:Class=null)
+		public function Piece(X:Number=0, Y:Number=0, graphic:int=0)
 		{
-			super(X, Y, SimpleGraphic);
+			super(X, Y);
 			
 			// An array of colours to choose from when generating a gamepiece
 			// Temporary until I can get sprites to work with
-			var color:Array = new Array(ImgCarrot, ImgEggplant, ImgMelon, ImgMushroom, ImgCog, ImgFlask);
+			var color:Array = new Array(ImgCarrot, ImgEggplant, ImgMelon, ImgChip, ImgCog, ImgFlask);
 			
 			height = 25;
 			width = 25;
-			var graphic:int = Math.floor(Math.random() * color.length);
 			loadGraphic(color[graphic], false, false);
 			solid = true;
 			setSprite(graphic);

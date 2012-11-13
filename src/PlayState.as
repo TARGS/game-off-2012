@@ -10,12 +10,13 @@ package
 	{
 		public var background:FlxSprite;
 		public var board:FlxSprite;
-		public var floor:FlxTileblock;
 		public var piece:Piece;
 		public var pieces:FlxGroup;
 		public var piecesArray:Array;
+		public var availablePiecesArray:Array;
 		
-		[Embed(source="data/background.png")] protected var ImgBackground:Class;
+		[Embed(source="data/background.png")] protected var JapanBackground:Class;
+		[Embed(source="data/canadabackground.gif")] protected var CanadaBackground:Class;
 		
 		// Sprites for Game Pieces
 		[Embed(source="data/carrot.png")] protected var ImgCarrot:Class;
@@ -30,7 +31,7 @@ package
 		protected var secondPiece:FlxExtendedSprite;
 		
 		override public function create():void
-		{
+		{		
 			if (FlxG.getPlugin(FlxMouseControl) == null)
 			{
 				FlxG.addPlugin(new FlxMouseControl);
@@ -39,22 +40,24 @@ package
 			// Set the background colour to light grey
 			FlxG.bgColor = 0xffeeeeee;
 			
-			background = new FlxSprite(0, 0);
-			background.loadGraphic(ImgBackground, false, false, 360, 240);
-			add(background);
-			
 			FlxG.mouse.show();
+			
+			background = new FlxSprite(0, 0);
+			
+			if (FlxG.level == 0) {
+				background.loadGraphic(JapanBackground, false, false, 360, 240);
+			} else if (FlxG.level == 1) {
+				background.loadGraphic(CanadaBackground, false, false, 360, 240);
+			}
+			add(background);
 			
 			board = new FlxSprite(110, 50);
 			board.makeGraphic(125, 175, 0xffaaaaaa);
 			add(board);
 			
-			floor = new FlxTileblock(110,board.y+board.height, 125, 10);
-			floor.makeGraphic(125, 10, 0xff000000);
-			add(floor);
-			
 			pieces = new FlxGroup();
 			piecesArray = new Array(new Array(new Array()), new Array(new Array()), new Array(new Array()), new Array(new Array()), new Array(new Array()));
+			availablePiecesArray = new Array(7, 7, 7, 7, 7);
 			
 			// First Row
 			createPiece(0, 0);
@@ -111,13 +114,33 @@ package
 		// Creates a piece inside a specified grid position (X, Y)
 		public function createPiece(X:uint,Y:uint, heightOffset:uint=0):void
 		{
-			// NOTE FOR JON: Find a way to randomize this but also check that it doesn't form a match-3 on start
-			piece = new Piece(X*25+110, Y*25+50-heightOffset);
+			// An array meant for the initial setup of the match
+			// Takes stock of which pieces are still available on first generation
+			// Creates an array of indices in availablePiecesArray that is >0
+			var stillAvailable:Array = new Array();
+			for (var index:int = 0; index < availablePiecesArray.length; index++) {
+				if (availablePiecesArray[index] == 0) {
+					
+				} else {
+					stillAvailable.push(index);
+				}
+			}
+			
+			var graphic:int;
+			
+			if (stillAvailable.length >> 0) { // Meant for initial level generation
+				graphic = Math.floor(Math.random() * stillAvailable.length);
+				piece = new Piece(X*25+110, Y*25+50-heightOffset, stillAvailable[graphic]);		
+				availablePiecesArray[stillAvailable[graphic]] -= 1;
+			} else { // Meant for creating pieces after matches clear out existing pieces
+				graphic = Math.floor(Math.random() * availablePiecesArray.length);
+				piece = new Piece(X*25+110, Y*25+50-heightOffset, graphic);
+			}
+			
 			piece.enableMouseClicks(false);
 			piece.mouseReleasedCallback = pieceClicked;
 			pieces.add(piece);
 			piecesArray[X][Y] = piece;
-			//FlxG.log("Successfully added piece at (" + X + ", " + Y + "): " + piecesArray[X][Y]);
 		}
 		
 		private function pieceClicked(obj:FlxExtendedSprite, x:int, y:int):void
@@ -174,44 +197,32 @@ package
 		{
 			checkRows();
 			checkColumns();
+			gridCheck();
 		}
 		
 		// Steps through each and every single row, checking for possible match-3 conditions
 		// Currently only iterates through match-3 scenarios, will build match-4 and match-5 conditions soon
 		private function checkRows():void
-		{
-			var comboCount:int = 0;
-			var startRowSaved:Array = new Array();
-			
+		{	
 			var rowNum:int;
 			for (rowNum = 0; rowNum <= 6; rowNum++) {
 				var pieceGraphic:int;
 				for (pieceGraphic = 0; pieceGraphic <= 5; pieceGraphic++) {
 					if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic) {
 						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						comboCount++;
-						startRowSaved.push([0, rowNum]);
-						//rowClear(0, rowNum);
+						rowClear(0, rowNum);
 					}
 					else if (piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic) {
 						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						comboCount++;
-						startRowSaved.push([1, rowNum]);
-						//rowClear(1, rowNum);
+						rowClear(1, rowNum);
 					}
 					else if (piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic) {
 						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						comboCount++;
-						startRowSaved.push([2, rowNum]);
-						//rowClear(2, rowNum);
+						rowClear(2, rowNum);
 					}
 				}
 			}
 			
-			for each (var count:Array in startRowSaved) {
-				rowClear(count[0], count[1]);				
-				FlxG.log("Score: " + comboCount*100);
-			}
 		}
 		
 		// Steps through each and every single column, checking for possible match-3 conditions
@@ -248,57 +259,95 @@ package
 		
 		private function rowClear(startCol:int, rowNum:int):void 
 		{	
-			pieces.remove(piecesArray[startCol][rowNum]);
-			pieces.remove(piecesArray[startCol+1][rowNum]);
-			pieces.remove(piecesArray[startCol+2][rowNum]);
-			piecesArray[startCol][rowNum].destroy();
-			piecesArray[startCol+1][rowNum].destroy();
-			piecesArray[startCol+2][rowNum].destroy();
-			
-			for (var aboveRows:int = rowNum-1; aboveRows >= 0; aboveRows--) {
-				TweenLite.to(piecesArray[startCol][aboveRows], 0.5, {x: piecesArray[startCol][aboveRows].x, y: piecesArray[startCol][aboveRows].y+25, ease:Bounce.easeOut});
-				TweenLite.to(piecesArray[startCol+1][aboveRows], 0.5, {x: piecesArray[startCol+1][aboveRows].x, y: piecesArray[startCol+1][aboveRows].y+25, ease:Bounce.easeOut});
-				TweenLite.to(piecesArray[startCol+2][aboveRows], 0.5, {x: piecesArray[startCol+2][aboveRows].x, y: piecesArray[startCol+2][aboveRows].y+25, ease:Bounce.easeOut});
-				piecesArray[startCol][aboveRows+1] = piecesArray[startCol][aboveRows];
-				piecesArray[startCol+1][aboveRows+1] = piecesArray[startCol+1][aboveRows];
-				piecesArray[startCol+2][aboveRows+1] = piecesArray[startCol+2][aboveRows];
-			}
-			
-			createPiece(startCol, 0, 25);
-			createPiece(startCol+1, 0, 25);
-			createPiece(startCol+2, 0, 25);
-			TweenLite.to(piecesArray[startCol][0], 0.5, {x: piecesArray[startCol][0].x, y: piecesArray[startCol][0].y+25, ease:Bounce.easeOut});
-			TweenLite.to(piecesArray[startCol+1][0], 0.5, {x: piecesArray[startCol+1][0].x, y: piecesArray[startCol+1][0].y+25, ease:Bounce.easeOut});
-			TweenLite.to(piecesArray[startCol+2][0], 0.5, {x: piecesArray[startCol+2][0].x, y: piecesArray[startCol+2][0].y+25, ease:Bounce.easeOut});
+			piecesArray[startCol][rowNum].kill();
+			piecesArray[startCol+1][rowNum].kill();
+			piecesArray[startCol+2][rowNum].kill();
 		}
 		
 		private function colClear(startCol:int, rowNum:int):void 
 		{
-			pieces.remove(piecesArray[startCol][rowNum-2]);
-			pieces.remove(piecesArray[startCol][rowNum-1]);
-			pieces.remove(piecesArray[startCol][rowNum]);
-			piecesArray[startCol][rowNum-2].destroy();
-			piecesArray[startCol][rowNum-1].destroy();
-			piecesArray[startCol][rowNum].destroy();
-			
-			for (var aboveRows:int = rowNum-3; aboveRows > -1; aboveRows--) {
-				TweenLite.to(piecesArray[startCol][aboveRows], 0.5, {x: piecesArray[startCol][aboveRows].x, y: piecesArray[startCol][aboveRows+3].y, ease:Bounce.easeOut});
-				piecesArray[startCol][aboveRows+3] = piecesArray[startCol][aboveRows];
+			piecesArray[startCol][rowNum-2].kill();
+			piecesArray[startCol][rowNum-1].kill();
+			piecesArray[startCol][rowNum].kill();
+		}
+		
+		private function gridCheck():void
+		{
+			for (var rowNum:int = 6; rowNum >= 0; rowNum--) {
+				for (var colNum:int = 4; colNum >= 0; colNum--) {
+					if (piecesArray[colNum][rowNum].exists == false) {
+						
+						/*
+						var emptyCount:int = 0;
+						for (var aboveRows:int = rowNum-1; aboveRows >= 0; aboveRows--) {
+							if (piecesArray[colNum][aboveRows].exists == true) {
+								break;
+							} else {
+								emptyCount++;
+							}
+						}
+						
+						FlxG.log(emptyCount);
+						
+						for (var rowCount:int = 0; rowCount <= emptyCount; rowCount++) {
+							for (var aboveRows:int = (rowNum-emptyCount); aboveRows >= 0; aboveRows--) {
+								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+((emptyCount+1)*25), ease:Bounce.easeOut});
+								piecesArray[colNum][aboveRows+emptyCount] = piecesArray[colNum][aboveRows];
+								FlxG.log("Moving piece on (" + colNum + ", " + aboveRows + ") to (" + colNum + ", " + (aboveRows+emptyCount) + ")");
+							}
+							FlxG.log("Creating piece on (" + colNum + ", " + emptyCount + ") with height offset = " + ((emptyCount+1)*25));
+							createPiece(colNum, rowCount, ((rowCount+1)*25));
+							TweenLite.to(piecesArray[colNum][rowCount], 0.5, {x: piecesArray[colNum][rowCount].x, y: piecesArray[colNum][rowCount].y+((rowCount+1)*25), ease:Bounce.easeOut});
+						}
+						*/
+						
+						var aboveRows:int;
+						
+						// If there are three vertical pieces to be replaced
+						if (piecesArray[colNum][rowNum-2].exists == false) {
+							
+							for (aboveRows = rowNum-3; aboveRows >= 0; aboveRows--) {
+								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+75, ease:Bounce.easeOut});
+								piecesArray[colNum][aboveRows+3] = piecesArray[colNum][aboveRows];
+							}
+							createPiece(colNum, 0, 25);
+							createPiece(colNum, 1, 50);
+							createPiece(colNum, 2, 75);
+							TweenLite.to(piecesArray[colNum][0], 0.5, {x: piecesArray[colNum][0].x, y: piecesArray[colNum][0].y+25, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][1], 0.5, {x: piecesArray[colNum][1].x, y: piecesArray[colNum][1].y+50, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][2], 0.5, {x: piecesArray[colNum][2].x, y: piecesArray[colNum][2].y+75, ease:Bounce.easeOut, onComplete:matchingCheck});
+							
+						// If there are two vertical pieces to be replaced
+						} else if (piecesArray[colNum][rowNum-1].exists == false) {
+							
+							for (aboveRows = rowNum-2; aboveRows >= 0; aboveRows--) {
+								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+50, ease:Bounce.easeOut});
+								piecesArray[colNum][aboveRows+2] = piecesArray[colNum][aboveRows];
+							}
+							createPiece(colNum, 0, 25);
+							createPiece(colNum, 1, 50);
+							TweenLite.to(piecesArray[colNum][0], 0.5, {x: piecesArray[colNum][0].x, y: piecesArray[colNum][0].y+25, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][1], 0.5, {x: piecesArray[colNum][1].x, y: piecesArray[colNum][1].y+50, ease:Bounce.easeOut, onComplete:matchingCheck});
+						
+						// If there is just one vertical piece to be replaced
+						} else /*if (piecesArray[colNum][rowNum].exists == false)*/ {
+							for (aboveRows = rowNum-1; aboveRows >= 0; aboveRows--) {
+								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+25, ease:Bounce.easeOut});
+								piecesArray[colNum][aboveRows+1] = piecesArray[colNum][aboveRows];
+							}
+							createPiece(colNum, 0, 25);
+							TweenLite.to(piecesArray[colNum][0], 0.5, {x: piecesArray[colNum][0].x, y: piecesArray[colNum][0].y+25, ease:Bounce.easeOut, onComplete:matchingCheck});
+						}
+						
+					}
+				}
 			}
-			createPiece(startCol, 0, 25);
-			createPiece(startCol, 1, 50);
-			createPiece(startCol, 2, 75);
-			TweenLite.to(piecesArray[startCol][0], 0.5, {x: piecesArray[startCol][0].x, y: piecesArray[startCol][0].y+25, ease:Bounce.easeOut});
-			TweenLite.to(piecesArray[startCol][1], 0.5, {x: piecesArray[startCol][1].x, y: piecesArray[startCol][1].y+50, ease:Bounce.easeOut});
-			TweenLite.to(piecesArray[startCol][2], 0.5, {x: piecesArray[startCol][2].x, y: piecesArray[startCol][2].y+75, ease:Bounce.easeOut});
 		}
 		
 		override public function update():void
 		{
 			super.update();
-			
-			FlxG.collide(pieces, floor);
-			FlxG.collide(pieces, pieces);
+
 		}
 	}
 }
