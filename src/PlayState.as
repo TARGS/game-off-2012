@@ -137,6 +137,7 @@ package
 				piece = new Piece(X*25+110, Y*25+50-heightOffset, graphic);
 			}
 			
+			// Enables clicking for the piece and adds to the FlxGroup of pieces on the board.
 			piece.enableMouseClicks(false);
 			piece.mouseReleasedCallback = pieceClicked;
 			pieces.add(piece);
