@@ -209,17 +209,18 @@ package
 			for (rowNum = 0; rowNum <= 6; rowNum++) {
 				var pieceGraphic:int;
 				for (pieceGraphic = 0; pieceGraphic <= 5; pieceGraphic++) {
-					if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic) {
-						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						rowClear(0, rowNum);
-					}
-					else if (piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic) {
-						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						rowClear(1, rowNum);
-					}
-					else if (piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic) {
-						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						rowClear(2, rowNum);
+					if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic) {
+						rowClear(0, rowNum, 5);
+					} else if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic) {
+						rowClear(0, rowNum, 4);
+					} else if (piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic) {
+						rowClear(1, rowNum, 4);
+					} else if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic) {
+						rowClear(0, rowNum, 3);
+					} else if (piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic) {
+						rowClear(1, rowNum, 3);
+					} else if (piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic) {
+						rowClear(2, rowNum, 3);
 					}
 				}
 			}
@@ -234,42 +235,55 @@ package
 			for (colNum = 0; colNum <= 4; colNum++) {
 				var pieceGraphic:int;
 				for (pieceGraphic = 0; pieceGraphic <= 5; pieceGraphic++) {
-					if (piecesArray[colNum][0].sprite == pieceGraphic && piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic) {
-						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						colClear(colNum, 2);
-					}
-					else if (piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic) {
-						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						colClear(colNum, 3);
-					}
-					else if (piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic) {
-						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						colClear(colNum, 4);
-					}
-					else if (piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic) {
-						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						colClear(colNum, 5);
-					}
-					else if (piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic && piecesArray[colNum][6].sprite == pieceGraphic) {
-						// Removes the pieces from the FlxGroup so that removing them doesn't destroy everything
-						colClear(colNum, 6);
+					if (piecesArray[colNum][0].sprite == pieceGraphic && piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic && piecesArray[colNum][6].sprite == pieceGraphic) {
+						colClear(colNum, 6, 7);
+					} else if (piecesArray[colNum][0].sprite == pieceGraphic && piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic) {
+						colClear(colNum, 5, 6);
+					} else if (piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic && piecesArray[colNum][6].sprite == pieceGraphic) {
+						colClear(colNum, 6, 6);
+					} else if (piecesArray[colNum][0].sprite == pieceGraphic && piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic) {
+						colClear(colNum, 4, 5);
+					} else if (piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic) {
+						colClear(colNum, 5, 5);
+					} else if (piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic && piecesArray[colNum][6].sprite == pieceGraphic) {
+						colClear(colNum, 6, 5);
+					} else if (piecesArray[colNum][0].sprite == pieceGraphic && piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic) {
+						colClear(colNum, 3, 4);
+					} else if (piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic) {
+						colClear(colNum, 4, 4);
+					} else if (piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic) {
+						colClear(colNum, 5, 4);
+					} else if (piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic && piecesArray[colNum][6].sprite == pieceGraphic) {
+						colClear(colNum, 6, 4);
+					} else if (piecesArray[colNum][0].sprite == pieceGraphic && piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic) {
+						colClear(colNum, 2, 3);
+					} else if (piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic) {
+						colClear(colNum, 3, 3);
+					} else if (piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic) {
+						colClear(colNum, 4, 3);
+					} else if (piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic) {
+						colClear(colNum, 5, 3);
+					} else if (piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic && piecesArray[colNum][6].sprite == pieceGraphic) {
+						colClear(colNum, 6, 3);
 					}
 				}
 			}
 		}
 		
-		private function rowClear(startCol:int, rowNum:int):void 
+		// Clears a matched row using a starting column, which row it's on, and how many pieces to eliminate
+		private function rowClear(startCol:int, rowNum:int, length:int):void 
 		{	
-			piecesArray[startCol][rowNum].kill();
-			piecesArray[startCol+1][rowNum].kill();
-			piecesArray[startCol+2][rowNum].kill();
+			for (var count:int = 0; count < length; count++) {
+				piecesArray[startCol+count][rowNum].kill();
+			}
 		}
 		
-		private function colClear(startCol:int, rowNum:int):void 
-		{
-			piecesArray[startCol][rowNum-2].kill();
-			piecesArray[startCol][rowNum-1].kill();
-			piecesArray[startCol][rowNum].kill();
+		// Clears a matched column using a starting column, which row the most bottom piece is on, and how many pieces above to eliminate
+		private function colClear(startCol:int, rowNum:int, length:int):void 
+		{	
+			for (var count:int = 0; count < length; count++) {
+				piecesArray[startCol][rowNum-count].kill();
+			}
 		}
 		
 		private function gridCheck():void
@@ -305,11 +319,11 @@ package
 						var aboveRows:int;
 						
 						// If there are three vertical pieces to be replaced
-						if (piecesArray[colNum][rowNum-2].exists == false) {
+						if (rowNum >= 2 && piecesArray[colNum][rowNum-2].exists == false && piecesArray[colNum][rowNum-1].exists == false && piecesArray[colNum][rowNum].exists == false) {
 							
 							for (aboveRows = rowNum-3; aboveRows >= 0; aboveRows--) {
-								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+75, ease:Bounce.easeOut});
 								piecesArray[colNum][aboveRows+3] = piecesArray[colNum][aboveRows];
+								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+75, ease:Bounce.easeOut});
 							}
 							createPiece(colNum, 0, 25);
 							createPiece(colNum, 1, 50);
@@ -319,11 +333,11 @@ package
 							TweenLite.to(piecesArray[colNum][2], 0.5, {x: piecesArray[colNum][2].x, y: piecesArray[colNum][2].y+75, ease:Bounce.easeOut, onComplete:matchingCheck});
 							
 						// If there are two vertical pieces to be replaced
-						} else if (piecesArray[colNum][rowNum-1].exists == false) {
+						} else if (rowNum >= 2 && piecesArray[colNum][rowNum-1].exists == false && piecesArray[colNum][rowNum].exists == false) {
 							
 							for (aboveRows = rowNum-2; aboveRows >= 0; aboveRows--) {
-								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+50, ease:Bounce.easeOut});
 								piecesArray[colNum][aboveRows+2] = piecesArray[colNum][aboveRows];
+								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+50, ease:Bounce.easeOut});
 							}
 							createPiece(colNum, 0, 25);
 							createPiece(colNum, 1, 50);
@@ -331,10 +345,11 @@ package
 							TweenLite.to(piecesArray[colNum][1], 0.5, {x: piecesArray[colNum][1].x, y: piecesArray[colNum][1].y+50, ease:Bounce.easeOut, onComplete:matchingCheck});
 						
 						// If there is just one vertical piece to be replaced
-						} else /*if (piecesArray[colNum][rowNum].exists == false)*/ {
+						} else if (piecesArray[colNum][rowNum].exists == false) {
 							for (aboveRows = rowNum-1; aboveRows >= 0; aboveRows--) {
-								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+25, ease:Bounce.easeOut});
+								FlxG.log("(" + colNum + ", " + aboveRows + ")");
 								piecesArray[colNum][aboveRows+1] = piecesArray[colNum][aboveRows];
+								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+25, ease:Bounce.easeOut});
 							}
 							createPiece(colNum, 0, 25);
 							TweenLite.to(piecesArray[colNum][0], 0.5, {x: piecesArray[colNum][0].x, y: piecesArray[colNum][0].y+25, ease:Bounce.easeOut, onComplete:matchingCheck});
