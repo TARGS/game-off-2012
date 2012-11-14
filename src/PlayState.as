@@ -292,34 +292,64 @@ package
 				for (var colNum:int = 4; colNum >= 0; colNum--) {
 					if (piecesArray[colNum][rowNum].exists == false) {
 						
-						/*
-						var emptyCount:int = 0;
-						for (var aboveRows:int = rowNum-1; aboveRows >= 0; aboveRows--) {
-							if (piecesArray[colNum][aboveRows].exists == true) {
-								break;
-							} else {
-								emptyCount++;
-							}
-						}
-						
-						FlxG.log(emptyCount);
-						
-						for (var rowCount:int = 0; rowCount <= emptyCount; rowCount++) {
-							for (var aboveRows:int = (rowNum-emptyCount); aboveRows >= 0; aboveRows--) {
-								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+((emptyCount+1)*25), ease:Bounce.easeOut});
-								piecesArray[colNum][aboveRows+emptyCount] = piecesArray[colNum][aboveRows];
-								FlxG.log("Moving piece on (" + colNum + ", " + aboveRows + ") to (" + colNum + ", " + (aboveRows+emptyCount) + ")");
-							}
-							FlxG.log("Creating piece on (" + colNum + ", " + emptyCount + ") with height offset = " + ((emptyCount+1)*25));
-							createPiece(colNum, rowCount, ((rowCount+1)*25));
-							TweenLite.to(piecesArray[colNum][rowCount], 0.5, {x: piecesArray[colNum][rowCount].x, y: piecesArray[colNum][rowCount].y+((rowCount+1)*25), ease:Bounce.easeOut});
-						}
-						*/
-						
 						var aboveRows:int;
 						
+						// If there are six vertical pieces to be replaced
+						if (rowNum >= 5 && piecesArray[colNum][rowNum-5].exists == false && piecesArray[colNum][rowNum-4].exists == false && piecesArray[colNum][rowNum-3].exists == false && piecesArray[colNum][rowNum-2].exists == false && piecesArray[colNum][rowNum-1].exists == false && piecesArray[colNum][rowNum].exists == false) {
+							
+							for (aboveRows = rowNum-6; aboveRows >= 0; aboveRows--) {
+								piecesArray[colNum][aboveRows+6] = piecesArray[colNum][aboveRows];
+								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+150, ease:Bounce.easeOut});
+							}
+							createPiece(colNum, 0, 25);
+							createPiece(colNum, 1, 50);
+							createPiece(colNum, 2, 75);
+							createPiece(colNum, 3, 100);
+							createPiece(colNum, 4, 125);
+							createPiece(colNum, 5, 150);
+							TweenLite.to(piecesArray[colNum][0], 0.5, {x: piecesArray[colNum][0].x, y: piecesArray[colNum][0].y+25, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][1], 0.5, {x: piecesArray[colNum][1].x, y: piecesArray[colNum][1].y+50, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][2], 0.5, {x: piecesArray[colNum][2].x, y: piecesArray[colNum][2].y+75, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][3], 0.5, {x: piecesArray[colNum][3].x, y: piecesArray[colNum][3].y+100, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][4], 0.5, {x: piecesArray[colNum][4].x, y: piecesArray[colNum][4].y+125, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][5], 0.5, {x: piecesArray[colNum][5].x, y: piecesArray[colNum][5].y+125, ease:Bounce.easeOut, onComplete:matchingCheck});
+							
+						// If there are five vertical pieces to be replaced
+						} else if (rowNum >= 4 && piecesArray[colNum][rowNum-4].exists == false && piecesArray[colNum][rowNum-3].exists == false && piecesArray[colNum][rowNum-2].exists == false && piecesArray[colNum][rowNum-1].exists == false && piecesArray[colNum][rowNum].exists == false) {
+							
+							for (aboveRows = rowNum-5; aboveRows >= 0; aboveRows--) {
+								piecesArray[colNum][aboveRows+5] = piecesArray[colNum][aboveRows];
+								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+125, ease:Bounce.easeOut});
+							}
+							createPiece(colNum, 0, 25);
+							createPiece(colNum, 1, 50);
+							createPiece(colNum, 2, 75);
+							createPiece(colNum, 3, 100);
+							createPiece(colNum, 4, 125);
+							TweenLite.to(piecesArray[colNum][0], 0.5, {x: piecesArray[colNum][0].x, y: piecesArray[colNum][0].y+25, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][1], 0.5, {x: piecesArray[colNum][1].x, y: piecesArray[colNum][1].y+50, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][2], 0.5, {x: piecesArray[colNum][2].x, y: piecesArray[colNum][2].y+75, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][3], 0.5, {x: piecesArray[colNum][3].x, y: piecesArray[colNum][3].y+100, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][4], 0.5, {x: piecesArray[colNum][4].x, y: piecesArray[colNum][4].y+125, ease:Bounce.easeOut, onComplete:matchingCheck});
+							
+						// If there are four vertical pieces to be replaced
+						} else if (rowNum >= 3 && piecesArray[colNum][rowNum-3].exists == false && piecesArray[colNum][rowNum-2].exists == false && piecesArray[colNum][rowNum-1].exists == false && piecesArray[colNum][rowNum].exists == false) {
+							
+							for (aboveRows = rowNum-4; aboveRows >= 0; aboveRows--) {
+								piecesArray[colNum][aboveRows+4] = piecesArray[colNum][aboveRows];
+								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+100, ease:Bounce.easeOut});
+							}
+							createPiece(colNum, 0, 25);
+							createPiece(colNum, 1, 50);
+							createPiece(colNum, 2, 75);
+							createPiece(colNum, 3, 100);
+							TweenLite.to(piecesArray[colNum][0], 0.5, {x: piecesArray[colNum][0].x, y: piecesArray[colNum][0].y+25, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][1], 0.5, {x: piecesArray[colNum][1].x, y: piecesArray[colNum][1].y+50, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][2], 0.5, {x: piecesArray[colNum][2].x, y: piecesArray[colNum][2].y+75, ease:Bounce.easeOut});
+							TweenLite.to(piecesArray[colNum][3], 0.5, {x: piecesArray[colNum][3].x, y: piecesArray[colNum][3].y+100, ease:Bounce.easeOut, onComplete:matchingCheck});
+							
 						// If there are three vertical pieces to be replaced
-						if (rowNum >= 2 && piecesArray[colNum][rowNum-2].exists == false && piecesArray[colNum][rowNum-1].exists == false && piecesArray[colNum][rowNum].exists == false) {
+						} else if (rowNum >= 2 && piecesArray[colNum][rowNum-2].exists == false && piecesArray[colNum][rowNum-1].exists == false && piecesArray[colNum][rowNum].exists == false) {
 							
 							for (aboveRows = rowNum-3; aboveRows >= 0; aboveRows--) {
 								piecesArray[colNum][aboveRows+3] = piecesArray[colNum][aboveRows];
