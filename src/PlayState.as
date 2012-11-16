@@ -15,8 +15,8 @@ package
 		public var piecesArray:Array;
 		public var availablePiecesArray:Array;
 		
-		[Embed(source="data/background.png")] protected var JapanBackground:Class;
-		[Embed(source="data/canadabackground.gif")] protected var CanadaBackground:Class;
+		[Embed(source="data/lab02_360x240.png")] protected var JapanBackground:Class;
+		[Embed(source="data/can_lab02_360x240.png")] protected var CanadaBackground:Class;
 		
 		// Sprites for Game Pieces
 		[Embed(source="data/carrot.png")] protected var ImgCarrot:Class;
@@ -29,6 +29,9 @@ package
 		protected var isSelected:uint = 0;
 		protected var firstPiece:FlxExtendedSprite;
 		protected var secondPiece:FlxExtendedSprite;
+		
+		protected var BOARDX = 115;
+		protected var BOARDY = 40
 		
 		override public function create():void
 		{		
@@ -51,8 +54,8 @@ package
 			}
 			add(background);
 			
-			board = new FlxSprite(110, 50);
-			board.makeGraphic(125, 175, 0xffaaaaaa);
+			board = new FlxSprite(BOARDX, BOARDY);
+			board.makeGraphic(125, 175, 0xffafb8c2);
 			add(board);
 			
 			pieces = new FlxGroup();
@@ -130,11 +133,11 @@ package
 			
 			if (stillAvailable.length >> 0) { // Meant for initial level generation
 				graphic = Math.floor(Math.random() * stillAvailable.length);
-				piece = new Piece(X*25+110, Y*25+50-heightOffset, stillAvailable[graphic]);		
+				piece = new Piece(X*25+BOARDX, Y*25+BOARDY-heightOffset, stillAvailable[graphic]);		
 				availablePiecesArray[stillAvailable[graphic]] -= 1;
 			} else { // Meant for creating pieces after matches clear out existing pieces
 				graphic = Math.floor(Math.random() * availablePiecesArray.length);
-				piece = new Piece(X*25+110, Y*25+50-heightOffset, graphic);
+				piece = new Piece(X*25+BOARDX, Y*25+BOARDY-heightOffset, graphic);
 			}
 			
 			// Enables clicking for the piece and adds to the FlxGroup of pieces on the board.
@@ -161,12 +164,12 @@ package
 				var _tempSprite:FlxExtendedSprite;
 				
 				// Figures out the grid coordinates for the first piece, using the numbers used to position the piece in the first place
-				firstPieceX = (firstPiece.x - 110)/25;
-				firstPieceY = (firstPiece.y - 50)/25;
+				firstPieceX = (firstPiece.x - BOARDX)/25;
+				firstPieceY = (firstPiece.y - BOARDY)/25;
 				
 				// Figures out the grid coordinates for the second piece, using the numbers used to position the piece in the first place
-				secondPieceX = (secondPiece.x - 110)/25;
-				secondPieceY = (secondPiece.y - 50)/25;
+				secondPieceX = (secondPiece.x - BOARDX)/25;
+				secondPieceY = (secondPiece.y - BOARDY)/25;
 				
 				if (
 					(((firstPieceX - secondPieceX) == 1 || (firstPieceX - secondPieceX) == -1) && (firstPieceY - secondPieceY) == 0) ||
