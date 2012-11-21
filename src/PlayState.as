@@ -15,8 +15,13 @@ package
 		public var piecesArray:Array;
 		public var availablePiecesArray:Array;
 		
-		[Embed(source="data/lab02_360x240.png")] protected var JapanBackground:Class;
+		public var _numTime:Number = 300;
+		var timerText:FlxText;
+		
+		[Embed(source="data/lab04_360x240_blanktext.png")] protected var JapanBackground:Class;
 		[Embed(source="data/can_lab02_360x240.png")] protected var CanadaBackground:Class;
+		
+		[Embed(source="data/Fonts/slkscr.ttf", fontFamily="SilkScreen", embedAsCFF="false")] private var _FontSilkScreen:String;
 		
 		// Sprites for Game Pieces
 		[Embed(source="data/carrot.png")] protected var ImgCarrot:Class;
@@ -57,6 +62,10 @@ package
 			board = new FlxSprite(BOARDX, BOARDY);
 			board.makeGraphic(125, 175, 0xffafb8c2);
 			add(board);
+			
+			timerText = new FlxText(5, 5, 200, "5:00", true);
+			timerText.setFormat("Silkscreen", 16, 0xffffffff, "left");
+			add(timerText);
 			
 			pieces = new FlxGroup();
 			piecesArray = new Array(new Array(new Array()), new Array(new Array()), new Array(new Array()), new Array(new Array()), new Array(new Array()));
@@ -393,10 +402,23 @@ package
 			}
 		}
 		
+		public function runTime():void
+		{
+			//Reduce Number
+			_numTime -= FlxG.elapsed;
+			
+			//Update HUD
+			if (_numTime%60 < 10) {
+				timerText.text = ""+FlxU.floor(_numTime/60) + ":0" + FlxU.floor(_numTime%60);
+			} else {
+				timerText.text = ""+FlxU.floor(_numTime/60) + ":" + FlxU.floor(_numTime%60);
+			}
+		}
+		
 		override public function update():void
 		{
 			super.update();
-
+			runTime();
 		}
 	}
 }
