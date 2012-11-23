@@ -18,7 +18,7 @@ package
 		public var _numTime:Number = 300;
 		var timerText:FlxText;
 		
-		[Embed(source="data/lab04_360x240_blanktext.png")] protected var JapanBackground:Class;
+		[Embed(source="data/lab05_360x240.png")] protected var JapanBackground:Class;
 		[Embed(source="data/can_lab02_360x240.png")] protected var CanadaBackground:Class;
 		
 		[Embed(source="data/Fonts/slkscr.ttf", fontFamily="SilkScreen", embedAsCFF="false")] private var _FontSilkScreen:String;
@@ -35,8 +35,8 @@ package
 		protected var firstPiece:FlxExtendedSprite;
 		protected var secondPiece:FlxExtendedSprite;
 		
-		protected var BOARDX = 115;
-		protected var BOARDY = 40
+		protected var BOARDX = 105;
+		protected var BOARDY = 38.5;
 		
 		override public function create():void
 		{		
@@ -59,17 +59,17 @@ package
 			}
 			add(background);
 			
-			board = new FlxSprite(BOARDX, BOARDY);
-			board.makeGraphic(125, 175, 0xffafb8c2);
-			add(board);
+			//board = new FlxSprite(BOARDX, BOARDY);
+			//board.makeGraphic(125, 175, 0xffafb8c2);
+			//add(board);
 			
-			timerText = new FlxText(5, 5, 200, "5:00", true);
-			timerText.setFormat("Silkscreen", 16, 0xffffffff, "left");
+			timerText = new FlxText(3, 4, 200, "5:00", true);
+			timerText.setFormat("Silkscreen", 17, 0xffffffff, "left");
 			add(timerText);
 			
 			pieces = new FlxGroup();
-			piecesArray = new Array(new Array(new Array()), new Array(new Array()), new Array(new Array()), new Array(new Array()), new Array(new Array()));
-			availablePiecesArray = new Array(7, 7, 7, 7, 7);
+			piecesArray = new Array(new Array(new Array()), new Array(new Array()), new Array(new Array()), new Array(new Array()), new Array(new Array()), new Array(new Array()));
+			availablePiecesArray = new Array(9, 9, 9, 9, 9);
 			
 			// First Row
 			createPiece(0, 0);
@@ -77,6 +77,7 @@ package
 			createPiece(2, 0);
 			createPiece(3, 0);
 			createPiece(4, 0);
+			createPiece(5, 0);
 			
 			// Second Row
 			createPiece(0, 1);
@@ -84,6 +85,7 @@ package
 			createPiece(2, 1);
 			createPiece(3, 1);
 			createPiece(4, 1);
+			createPiece(5, 1);
 			
 			// Third Row
 			createPiece(0, 2);
@@ -91,6 +93,7 @@ package
 			createPiece(2, 2);
 			createPiece(3, 2);
 			createPiece(4, 2);
+			createPiece(5, 2);
 			
 			// Fourth Row
 			createPiece(0, 3);
@@ -98,6 +101,7 @@ package
 			createPiece(2, 3);
 			createPiece(3, 3);
 			createPiece(4, 3);
+			createPiece(5, 3);
 			
 			// Fifth Row
 			createPiece(0, 4);
@@ -105,6 +109,7 @@ package
 			createPiece(2, 4);
 			createPiece(3, 4);
 			createPiece(4, 4);
+			createPiece(5, 4);
 			
 			// Sixth Row
 			createPiece(0, 5);
@@ -112,6 +117,7 @@ package
 			createPiece(2, 5);
 			createPiece(3, 5);
 			createPiece(4, 5);
+			createPiece(5, 5);
 			
 			// Seventh Row
 			createPiece(0, 6);
@@ -119,6 +125,7 @@ package
 			createPiece(2, 6);
 			createPiece(3, 6);
 			createPiece(4, 6);
+			createPiece(5, 6);
 			
 			add(pieces);
 		}
@@ -221,18 +228,26 @@ package
 			for (rowNum = 0; rowNum <= 6; rowNum++) {
 				var pieceGraphic:int;
 				for (pieceGraphic = 0; pieceGraphic <= 5; pieceGraphic++) {
-					if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic) {
+					if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic && piecesArray[5][rowNum].sprite == pieceGraphic) {
+						rowClear(0, rowNum, 6);
+					} else if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic) {
 						rowClear(0, rowNum, 5);
+					} else if (piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic && piecesArray[5][rowNum].sprite == pieceGraphic) {
+						rowClear(1, rowNum, 5);
 					} else if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic) {
 						rowClear(0, rowNum, 4);
 					} else if (piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic) {
 						rowClear(1, rowNum, 4);
+					} else if (piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic && piecesArray[5][rowNum].sprite == pieceGraphic) {
+						rowClear(2, rowNum, 4);
 					} else if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic) {
 						rowClear(0, rowNum, 3);
 					} else if (piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic) {
 						rowClear(1, rowNum, 3);
 					} else if (piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic) {
 						rowClear(2, rowNum, 3);
+					} else if (piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic && piecesArray[5][rowNum].sprite == pieceGraphic) {
+						rowClear(3, rowNum, 3);
 					}
 				}
 			}
@@ -244,7 +259,7 @@ package
 		private function checkColumns():void
 		{
 			var colNum:int;
-			for (colNum = 0; colNum <= 4; colNum++) {
+			for (colNum = 0; colNum <= 5; colNum++) {
 				var pieceGraphic:int;
 				for (pieceGraphic = 0; pieceGraphic <= 5; pieceGraphic++) {
 					if (piecesArray[colNum][0].sprite == pieceGraphic && piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic && piecesArray[colNum][6].sprite == pieceGraphic) {
@@ -301,7 +316,7 @@ package
 		private function gridCheck():void
 		{
 			for (var rowNum:int = 6; rowNum >= 0; rowNum--) {
-				for (var colNum:int = 4; colNum >= 0; colNum--) {
+				for (var colNum:int = 5; colNum >= 0; colNum--) {
 					if (piecesArray[colNum][rowNum].exists == false) {
 						
 						var aboveRows:int;
