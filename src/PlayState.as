@@ -20,6 +20,9 @@ package
 		public var _numTime:Number = 300;
 		public var timerText:FlxText;
 		
+		public var _levelScore:Number = 0;
+		public var scoreText:FlxText;
+		
 		[Embed(source="data/lab05_360x240.png")] protected var JapanBackground:Class;
 		[Embed(source="data/can_lab02_360x240.png")] protected var CanadaBackground:Class;
 		
@@ -68,6 +71,10 @@ package
 			timerText = new FlxText(3, 4, 200, "5:00", true);
 			timerText.setFormat("Silkscreen", 17, 0xffffffff, "left");
 			add(timerText);
+			
+			scoreText = new FlxText(77, 4, 200, ("" + _levelScore), true);
+			scoreText.setFormat("Silkscreen", 17, 0xffffffff, "left");
+			add(scoreText);
 			
 			pieces = new FlxGroup();
 			piecesArray = new Array(new Array(new Array()), new Array(new Array()), new Array(new Array()), new Array(new Array()), new Array(new Array()), new Array(new Array()));
@@ -238,11 +245,15 @@ package
 			for each (var queueItem:Array in processArray) {
 				if (queueItem[0] == "row") {
 					rowClear(queueItem[1], queueItem[2], queueItem[3]);
+					_levelScore += (100 * Math.pow(2, queueItem[3]));
 				} else if (queueItem[0] == "column") {
 					colClear(queueItem[1], queueItem[2], queueItem[3]);
+					_levelScore += (100 * Math.pow(2, queueItem[3]));
 				} else {
 					
 				}
+				
+				scoreText.text = "" + _levelScore;
 			}
 			
 			FlxG.log("Executing grid check.");
