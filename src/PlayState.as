@@ -220,6 +220,20 @@ package
 			gridCheck();
 		}
 		
+		// A queue for any and all animations and movements
+		// Currently: all animations CAN happen simultaneously and cause errors
+		// Desired: this queue should be processed after everything is marked, and then, and only then, will it begin to clear rows + columns, and find empty spaces afterward
+		//
+		// Action: iterate through an array, containing [type, column, row, length]
+		//   type: "row" or "column"
+		//   column: starting column
+		//   row: starting row
+		//   length: the number of pieces to eliminate
+		public function processQueue(queueArray:Array):void
+		{
+			
+		}
+		
 		// Steps through each and every single row, checking for possible match-3 conditions
 		// Currently only iterates through match-3 scenarios, will build match-4 and match-5 conditions soon
 		private function checkRows():void
