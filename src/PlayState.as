@@ -16,7 +16,7 @@ package
 		public var availablePiecesArray:Array;
 		
 		public var _numTime:Number = 300;
-		var timerText:FlxText;
+		public var timerText:FlxText;
 		
 		[Embed(source="data/lab05_360x240.png")] protected var JapanBackground:Class;
 		[Embed(source="data/can_lab02_360x240.png")] protected var CanadaBackground:Class;
@@ -35,8 +35,8 @@ package
 		protected var firstPiece:FlxExtendedSprite;
 		protected var secondPiece:FlxExtendedSprite;
 		
-		protected var BOARDX = 105;
-		protected var BOARDY = 38.5;
+		protected var BOARDX:Number = 105;
+		protected var BOARDY:Number = 38.5;
 		
 		override public function create():void
 		{		
