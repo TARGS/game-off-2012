@@ -15,6 +15,8 @@ package
 		public var piecesArray:Array;
 		public var availablePiecesArray:Array;
 		
+		public var queueArray:Array = new Array();
+		
 		public var _numTime:Number = 300;
 		public var timerText:FlxText;
 		
@@ -217,7 +219,37 @@ package
 		{
 			checkRows();
 			checkColumns();
+			processQueue(queueArray);
+			//gridCheck();
+		}
+		
+		// A queue for any and all animations and movements
+		// Currently: all animations CAN happen simultaneously and cause errors
+		// Desired: this queue should be processed after everything is marked, and then, and only then, will it begin to clear rows + columns, and find empty spaces afterward
+		//
+		// Action: iterate through an array, containing [type, column, row, length]
+		//   type: "row" or "column"
+		//   column: starting column
+		//   row: starting row
+		//   length: the number of pieces to eliminate
+		public function processQueue(processArray:Array):void
+		{
+			FlxG.log("Starting number of processes: " + queueArray.length);
+			for each (var queueItem:Array in processArray) {
+				if (queueItem[0] == "row") {
+					rowClear(queueItem[1], queueItem[2], queueItem[3]);
+				} else if (queueItem[0] == "column") {
+					colClear(queueItem[1], queueItem[2], queueItem[3]);
+				} else {
+					
+				}
+			}
+			
+			FlxG.log("Executing grid check.");
 			gridCheck();
+			
+			queueArray = new Array();
+			FlxG.log("After processing: " + queueArray.length);
 		}
 		
 		// Steps through each and every single row, checking for possible match-3 conditions
@@ -229,29 +261,38 @@ package
 				var pieceGraphic:int;
 				for (pieceGraphic = 0; pieceGraphic <= 5; pieceGraphic++) {
 					if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic && piecesArray[5][rowNum].sprite == pieceGraphic) {
-						rowClear(0, rowNum, 6);
+						//rowClear(0, rowNum, 6);
+						queueArray.push(["row", 0, rowNum, 6]);
 					} else if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic) {
-						rowClear(0, rowNum, 5);
+						//rowClear(0, rowNum, 5);
+						queueArray.push(["row", 0, rowNum, 5]);
 					} else if (piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic && piecesArray[5][rowNum].sprite == pieceGraphic) {
-						rowClear(1, rowNum, 5);
+						//rowClear(1, rowNum, 5);
+						queueArray.push(["row", 1, rowNum, 5]);
 					} else if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic) {
-						rowClear(0, rowNum, 4);
+						//rowClear(0, rowNum, 4);
+						queueArray.push(["row", 0, rowNum, 4]);
 					} else if (piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic) {
-						rowClear(1, rowNum, 4);
+						//rowClear(1, rowNum, 4);
+						queueArray.push(["row", 1, rowNum, 4]);
 					} else if (piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic && piecesArray[5][rowNum].sprite == pieceGraphic) {
-						rowClear(2, rowNum, 4);
+						//rowClear(2, rowNum, 4);
+						queueArray.push(["row", 2, rowNum, 4]);
 					} else if (piecesArray[0][rowNum].sprite == pieceGraphic && piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic) {
-						rowClear(0, rowNum, 3);
+						//rowClear(0, rowNum, 3);
+						queueArray.push(["row", 0, rowNum, 3]);
 					} else if (piecesArray[1][rowNum].sprite == pieceGraphic && piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic) {
-						rowClear(1, rowNum, 3);
+						//rowClear(1, rowNum, 3);
+						queueArray.push(["row", 1, rowNum, 3]);
 					} else if (piecesArray[2][rowNum].sprite == pieceGraphic && piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic) {
-						rowClear(2, rowNum, 3);
+						//rowClear(2, rowNum, 3);
+						queueArray.push(["row", 2, rowNum, 3]);
 					} else if (piecesArray[3][rowNum].sprite == pieceGraphic && piecesArray[4][rowNum].sprite == pieceGraphic && piecesArray[5][rowNum].sprite == pieceGraphic) {
-						rowClear(3, rowNum, 3);
+						//rowClear(3, rowNum, 3);
+						queueArray.push(["row", 3, rowNum, 3]);
 					}
 				}
 			}
-			
 		}
 		
 		// Steps through each and every single column, checking for possible match-3 conditions
@@ -263,35 +304,50 @@ package
 				var pieceGraphic:int;
 				for (pieceGraphic = 0; pieceGraphic <= 5; pieceGraphic++) {
 					if (piecesArray[colNum][0].sprite == pieceGraphic && piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic && piecesArray[colNum][6].sprite == pieceGraphic) {
-						colClear(colNum, 6, 7);
+						//colClear(colNum, 6, 7);
+						queueArray.push(["column", colNum, 6, 7]);
 					} else if (piecesArray[colNum][0].sprite == pieceGraphic && piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic) {
-						colClear(colNum, 5, 6);
+						//colClear(colNum, 5, 6);
+						queueArray.push(["column", colNum, 5, 6]);
 					} else if (piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic && piecesArray[colNum][6].sprite == pieceGraphic) {
-						colClear(colNum, 6, 6);
+						//colClear(colNum, 6, 6);
+						queueArray.push(["column", colNum, 6, 6]);
 					} else if (piecesArray[colNum][0].sprite == pieceGraphic && piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic) {
-						colClear(colNum, 4, 5);
+						//colClear(colNum, 4, 5);
+						queueArray.push(["column", colNum, 4, 5]);
 					} else if (piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic) {
-						colClear(colNum, 5, 5);
+						//colClear(colNum, 5, 5);
+						queueArray.push(["column", colNum, 5, 5]);
 					} else if (piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic && piecesArray[colNum][6].sprite == pieceGraphic) {
-						colClear(colNum, 6, 5);
+						//colClear(colNum, 6, 5);
+						queueArray.push(["column", colNum, 6, 5]);
 					} else if (piecesArray[colNum][0].sprite == pieceGraphic && piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic) {
-						colClear(colNum, 3, 4);
+						//colClear(colNum, 3, 4);
+						queueArray.push(["column", colNum, 3, 4]);
 					} else if (piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic) {
-						colClear(colNum, 4, 4);
+						//colClear(colNum, 4, 4);
+						queueArray.push(["column", colNum, 4, 4]);
 					} else if (piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic) {
-						colClear(colNum, 5, 4);
+						//colClear(colNum, 5, 4);
+						queueArray.push(["column", colNum, 5, 4]);
 					} else if (piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic && piecesArray[colNum][6].sprite == pieceGraphic) {
-						colClear(colNum, 6, 4);
+						//colClear(colNum, 6, 4);
+						queueArray.push(["column", colNum, 6, 4]);
 					} else if (piecesArray[colNum][0].sprite == pieceGraphic && piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic) {
-						colClear(colNum, 2, 3);
+						//colClear(colNum, 2, 3);
+						queueArray.push(["column", colNum, 2, 3]);
 					} else if (piecesArray[colNum][1].sprite == pieceGraphic && piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic) {
-						colClear(colNum, 3, 3);
+						//colClear(colNum, 3, 3);
+						queueArray.push(["column", colNum, 3, 3]);
 					} else if (piecesArray[colNum][2].sprite == pieceGraphic && piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic) {
-						colClear(colNum, 4, 3);
+						//colClear(colNum, 4, 3);
+						queueArray.push(["column", colNum, 4, 3]);
 					} else if (piecesArray[colNum][3].sprite == pieceGraphic && piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic) {
-						colClear(colNum, 5, 3);
+						//colClear(colNum, 5, 3);
+						queueArray.push(["column", colNum, 5, 3]);
 					} else if (piecesArray[colNum][4].sprite == pieceGraphic && piecesArray[colNum][5].sprite == pieceGraphic && piecesArray[colNum][6].sprite == pieceGraphic) {
-						colClear(colNum, 6, 3);
+						//colClear(colNum, 6, 3);
+						queueArray.push(["column", colNum, 6, 3]);
 					}
 				}
 			}
@@ -339,7 +395,7 @@ package
 							TweenLite.to(piecesArray[colNum][2], 0.5, {x: piecesArray[colNum][2].x, y: piecesArray[colNum][2].y+75, ease:Bounce.easeOut});
 							TweenLite.to(piecesArray[colNum][3], 0.5, {x: piecesArray[colNum][3].x, y: piecesArray[colNum][3].y+100, ease:Bounce.easeOut});
 							TweenLite.to(piecesArray[colNum][4], 0.5, {x: piecesArray[colNum][4].x, y: piecesArray[colNum][4].y+125, ease:Bounce.easeOut});
-							TweenLite.to(piecesArray[colNum][5], 0.5, {x: piecesArray[colNum][5].x, y: piecesArray[colNum][5].y+125, ease:Bounce.easeOut, onComplete:matchingCheck});
+							TweenLite.to(piecesArray[colNum][5], 0.5, {x: piecesArray[colNum][5].x, y: piecesArray[colNum][5].y+125, ease:Bounce.easeOut});
 							
 						// If there are five vertical pieces to be replaced
 						} else if (rowNum >= 4 && piecesArray[colNum][rowNum-4].exists == false && piecesArray[colNum][rowNum-3].exists == false && piecesArray[colNum][rowNum-2].exists == false && piecesArray[colNum][rowNum-1].exists == false && piecesArray[colNum][rowNum].exists == false) {
@@ -357,7 +413,7 @@ package
 							TweenLite.to(piecesArray[colNum][1], 0.5, {x: piecesArray[colNum][1].x, y: piecesArray[colNum][1].y+50, ease:Bounce.easeOut});
 							TweenLite.to(piecesArray[colNum][2], 0.5, {x: piecesArray[colNum][2].x, y: piecesArray[colNum][2].y+75, ease:Bounce.easeOut});
 							TweenLite.to(piecesArray[colNum][3], 0.5, {x: piecesArray[colNum][3].x, y: piecesArray[colNum][3].y+100, ease:Bounce.easeOut});
-							TweenLite.to(piecesArray[colNum][4], 0.5, {x: piecesArray[colNum][4].x, y: piecesArray[colNum][4].y+125, ease:Bounce.easeOut, onComplete:matchingCheck});
+							TweenLite.to(piecesArray[colNum][4], 0.5, {x: piecesArray[colNum][4].x, y: piecesArray[colNum][4].y+125, ease:Bounce.easeOut});
 							
 						// If there are four vertical pieces to be replaced
 						} else if (rowNum >= 3 && piecesArray[colNum][rowNum-3].exists == false && piecesArray[colNum][rowNum-2].exists == false && piecesArray[colNum][rowNum-1].exists == false && piecesArray[colNum][rowNum].exists == false) {
@@ -373,7 +429,7 @@ package
 							TweenLite.to(piecesArray[colNum][0], 0.5, {x: piecesArray[colNum][0].x, y: piecesArray[colNum][0].y+25, ease:Bounce.easeOut});
 							TweenLite.to(piecesArray[colNum][1], 0.5, {x: piecesArray[colNum][1].x, y: piecesArray[colNum][1].y+50, ease:Bounce.easeOut});
 							TweenLite.to(piecesArray[colNum][2], 0.5, {x: piecesArray[colNum][2].x, y: piecesArray[colNum][2].y+75, ease:Bounce.easeOut});
-							TweenLite.to(piecesArray[colNum][3], 0.5, {x: piecesArray[colNum][3].x, y: piecesArray[colNum][3].y+100, ease:Bounce.easeOut, onComplete:matchingCheck});
+							TweenLite.to(piecesArray[colNum][3], 0.5, {x: piecesArray[colNum][3].x, y: piecesArray[colNum][3].y+100, ease:Bounce.easeOut});
 							
 						// If there are three vertical pieces to be replaced
 						} else if (rowNum >= 2 && piecesArray[colNum][rowNum-2].exists == false && piecesArray[colNum][rowNum-1].exists == false && piecesArray[colNum][rowNum].exists == false) {
@@ -387,7 +443,7 @@ package
 							createPiece(colNum, 2, 75);
 							TweenLite.to(piecesArray[colNum][0], 0.5, {x: piecesArray[colNum][0].x, y: piecesArray[colNum][0].y+25, ease:Bounce.easeOut});
 							TweenLite.to(piecesArray[colNum][1], 0.5, {x: piecesArray[colNum][1].x, y: piecesArray[colNum][1].y+50, ease:Bounce.easeOut});
-							TweenLite.to(piecesArray[colNum][2], 0.5, {x: piecesArray[colNum][2].x, y: piecesArray[colNum][2].y+75, ease:Bounce.easeOut, onComplete:matchingCheck});
+							TweenLite.to(piecesArray[colNum][2], 0.5, {x: piecesArray[colNum][2].x, y: piecesArray[colNum][2].y+75, ease:Bounce.easeOut});
 							
 						// If there are two vertical pieces to be replaced
 						} else if (rowNum >= 2 && piecesArray[colNum][rowNum-1].exists == false && piecesArray[colNum][rowNum].exists == false) {
@@ -399,17 +455,17 @@ package
 							createPiece(colNum, 0, 25);
 							createPiece(colNum, 1, 50);
 							TweenLite.to(piecesArray[colNum][0], 0.5, {x: piecesArray[colNum][0].x, y: piecesArray[colNum][0].y+25, ease:Bounce.easeOut});
-							TweenLite.to(piecesArray[colNum][1], 0.5, {x: piecesArray[colNum][1].x, y: piecesArray[colNum][1].y+50, ease:Bounce.easeOut, onComplete:matchingCheck});
+							TweenLite.to(piecesArray[colNum][1], 0.5, {x: piecesArray[colNum][1].x, y: piecesArray[colNum][1].y+50, ease:Bounce.easeOut});
 						
 						// If there is just one vertical piece to be replaced
 						} else if (piecesArray[colNum][rowNum].exists == false) {
 							for (aboveRows = rowNum-1; aboveRows >= 0; aboveRows--) {
-								FlxG.log("(" + colNum + ", " + aboveRows + ")");
+								//FlxG.log("(" + colNum + ", " + aboveRows + ")");
 								piecesArray[colNum][aboveRows+1] = piecesArray[colNum][aboveRows];
 								TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+25, ease:Bounce.easeOut});
 							}
 							createPiece(colNum, 0, 25);
-							TweenLite.to(piecesArray[colNum][0], 0.5, {x: piecesArray[colNum][0].x, y: piecesArray[colNum][0].y+25, ease:Bounce.easeOut, onComplete:matchingCheck});
+							TweenLite.to(piecesArray[colNum][0], 0.5, {x: piecesArray[colNum][0].x, y: piecesArray[colNum][0].y+25, ease:Bounce.easeOut});
 						}
 						
 					}
