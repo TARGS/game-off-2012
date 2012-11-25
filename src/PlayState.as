@@ -16,6 +16,7 @@ package
 		public var availablePiecesArray:Array;
 		
 		public var queueArray:Array = new Array();
+		public var blankPosArray:Array = new Array();
 		
 		public var _numTime:Number = 300;
 		public var timerText:FlxText;
@@ -241,7 +242,7 @@ package
 		//   length: the number of pieces to eliminate
 		public function processQueue(processArray:Array):void
 		{
-			FlxG.log("Starting number of processes: " + queueArray.length);
+			//FlxG.log("Starting number of processes: " + queueArray.length);
 			for each (var queueItem:Array in processArray) {
 				if (queueItem[0] == "row") {
 					rowClear(queueItem[1], queueItem[2], queueItem[3]);
@@ -256,11 +257,12 @@ package
 				scoreText.text = "" + _levelScore;
 			}
 			
-			FlxG.log("Executing grid check.");
+			//FlxG.log("Executing grid check.");
 			gridCheck();
+			gridCheckToQueue();
 			
 			queueArray = new Array();
-			FlxG.log("After processing: " + queueArray.length);
+			//FlxG.log("After processing: " + queueArray.length);
 		}
 		
 		// Steps through each and every single row, checking for possible match-3 conditions
@@ -380,12 +382,46 @@ package
 			}
 		}
 		
+		// Instead of checking pieces one by one to see if there are blank spaces above them, we need to creaet an algorithm
+		// that checks the entire board for blank spaces, reports it back to an array with the position, and fill in the spaces
+		// one by one to ensure that all pieces are taken care of an accounted for
+		//
+		// Action: iterate through blankPosArray, which will be an array of six arrays (one for each column) containing row numbers
+		//         for each column to indicate which positions must be refilled.
+		private function gridCheckToQueue():void
+		{
+			//blankPosArray.reverse();
+			
+			for each (var blankPos:Array in blankPosArray) {
+				FlxG.log(blankPos);
+				
+				if (blankPos[1] != 0) {
+					piecesArray[blankPos[0]][blankPos[1]] = piecesArray[blankPos[0]][blankPos[1]-1];
+					TweenLite.to(piecesArray[blankPos[0]][blankPos[1]], 0.5, {x: piecesArray[blankPos[0]][blankPos[1]].x, y: piecesArray[blankPos[0]][blankPos[1]].y+25, ease:Bounce.easeOut});
+					
+					for (var aboveRows:int = (blankPos[1]-1); aboveRows >= 0; aboveRows--) {
+						piecesArray[blankPos[0]][aboveRows+1] = piecesArray[blankPos[0]][aboveRows];
+						TweenLite.to(piecesArray[blankPos[0]][aboveRows], 0.5, {x: piecesArray[blankPos[0]][aboveRows].x, y: piecesArray[blankPos[0]][aboveRows].y+25, ease:Bounce.easeOut});
+					}
+				}
+				
+				createPiece(blankPos[0], 0, 25);
+				TweenLite.to(piecesArray[blankPos[0]][0], 0.5, {x: piecesArray[blankPos[0]][0].x, y: piecesArray[blankPos[0]][0].y+25, ease:Bounce.easeOut});
+			}
+			//FlxG.log(blankPosArray[colNum]);
+			
+			blankPosArray = new Array();
+		}
+		
 		private function gridCheck():void
 		{
 			for (var rowNum:int = 6; rowNum >= 0; rowNum--) {
 				for (var colNum:int = 5; colNum >= 0; colNum--) {
 					if (piecesArray[colNum][rowNum].exists == false) {
+						blankPosArray.push([colNum, rowNum]);
+						//FlxG.log(blankPosArray[colNum]);
 						
+						/*
 						var aboveRows:int;
 						
 						// If there are six vertical pieces to be replaced
@@ -478,7 +514,7 @@ package
 							createPiece(colNum, 0, 25);
 							TweenLite.to(piecesArray[colNum][0], 0.5, {x: piecesArray[colNum][0].x, y: piecesArray[colNum][0].y+25, ease:Bounce.easeOut});
 						}
-						
+						*/
 					}
 				}
 			}
