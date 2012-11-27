@@ -28,14 +28,6 @@ package
 		
 		[Embed(source="data/Fonts/slkscr.ttf", fontFamily="SilkScreen", embedAsCFF="false")] private var _FontSilkScreen:String;
 		
-		// Sprites for Game Pieces
-		[Embed(source="data/carrot.png")] protected var ImgCarrot:Class;
-		[Embed(source="data/eggplant.png")] protected var ImgEggplant:Class;
-		[Embed(source="data/melon.png")] protected var ImgMelon:Class;
-		[Embed(source="data/mushroom.png")] protected var ImgMushroom:Class;
-		[Embed(source="data/onion.png")] protected var ImgOnion:Class;
-		[Embed(source="data/pineapple.png")] protected var ImgPineapple:Class;
-		
 		protected var isSelected:uint = 0;
 		protected var firstPiece:FlxExtendedSprite;
 		protected var secondPiece:FlxExtendedSprite;

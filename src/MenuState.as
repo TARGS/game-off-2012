@@ -5,9 +5,10 @@ package
 	
 	public class MenuState extends FlxState
 	{
-		public var title1:FlxText;
-		public var title2:FlxText;
 		public var playButton:FlxButton;
+		public var background:FlxSprite;
+		
+		[Embed(source="data/stageselect01.png")] protected var MenuBackground:Class;
 		
 		public var japanButton:FlxButton;
 		public var canadaButton:FlxButton;
@@ -17,23 +18,20 @@ package
 			// Set the background colour to light grey
 			FlxG.bgColor = 0xffeeeeee;
 			
+			background = new FlxSprite(0, 0);
+			background.loadGraphic(MenuBackground, false, false, 360, 240);
+			add(background);
+			
 			FlxG.mouse.show();
 			
-			//the letters "mo"
-			title1 = new FlxText(FlxG.width/4,FlxG.height/3-70,180,"Match 3 Game, Thingy");
-			title1.size = 32;
-			title1.color = 0x3a5c39;
-			title1.antialiasing = true;
-			add(title1);
-			
-			japanButton = new FlxButton(10, FlxG.height/3 + 82, "JAPAN", japanButtonPress);
-			japanButton.color = 0xff729954;
-			japanButton.label.color = 0xffd8eba2;
+			japanButton = new FlxButton(280, 62, "JAPAN", japanButtonPress);
+			japanButton.color = 0xff0000000;
+			japanButton.label.color = 0xffffffff;
 			add(japanButton);
 			
-			canadaButton = new FlxButton(100, FlxG.height/3 + 82, "CANADA", canadaButtonPress);
-			canadaButton.color = 0xff729954;
-			canadaButton.label.color = 0xffd8eba2;
+			canadaButton = new FlxButton(0, 93, "CANADA", canadaButtonPress);
+			canadaButton.color = 0xff0000000;
+			canadaButton.label.color = 0xffffffff;
 			add(canadaButton);
 		}
 		
