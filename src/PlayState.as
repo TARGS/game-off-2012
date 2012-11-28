@@ -50,9 +50,15 @@ package
 			background = new FlxSprite(0, 0);
 			
 			if (FlxG.level == 0) {
-				background.loadGraphic(JapanBackground, false, false, 360, 240);
+				background.loadGraphic(CanadaBackground, false, false, 360, 240);
 			} else if (FlxG.level == 1) {
 				background.loadGraphic(CanadaBackground, false, false, 360, 240);
+			} else if (FlxG.level == 2) {
+				background.loadGraphic(JapanBackground, false, false, 360, 240);
+			} else if (FlxG.level == 3) {
+				background.loadGraphic(JapanBackground, false, false, 360, 240);
+			} else if (FlxG.level == 4) {
+				background.loadGraphic(JapanBackground, false, false, 360, 240);
 			}
 			add(background);
 			
