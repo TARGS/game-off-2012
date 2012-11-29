@@ -51,7 +51,7 @@ package
 			russiaButton = new FlxExtendedSprite(7, 120);
 			russiaButton.loadGraphic(RussiaButton, false, false);
 			russiaButton.enableMouseClicks(false);
-			//russiaButton.mouseReleasedCallback = russiaButtonPress;
+			russiaButton.mouseReleasedCallback = russiaButtonPress;
 			add(russiaButton);
 			
 			japanButton = new FlxExtendedSprite(289, 15);
@@ -63,13 +63,13 @@ package
 			usaButton = new FlxExtendedSprite(289, 88);
 			usaButton.loadGraphic(USAButton, false, false);
 			usaButton.enableMouseClicks(false);
-			//usaButton.mouseReleasedCallback = usaButtonPress;
+			usaButton.mouseReleasedCallback = usaButtonPress;
 			add(usaButton);
 			
 			germanyButton = new FlxExtendedSprite(289, 162);
 			germanyButton.loadGraphic(GermanyButton, false, false);
 			germanyButton.enableMouseClicks(false);
-			//germanyButton.mouseReleasedCallback = germanyButtonPress;
+			germanyButton.mouseReleasedCallback = germanyButtonPress;
 			add(germanyButton);
 		}
 		

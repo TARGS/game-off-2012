@@ -9,7 +9,7 @@ package
 	public class PlayState extends FlxState
 	{
 		public var background:FlxSprite;
-		public var board:FlxSprite;
+		public var tvFlag:FlxSprite;
 		public var piece:Piece;
 		public var pieces:FlxGroup;
 		public var piecesArray:Array;
@@ -23,8 +23,13 @@ package
 		public var _levelScore:Number = 0;
 		public var scoreText:FlxText;
 		
-		[Embed(source="data/lab05_360x240.png")] protected var JapanBackground:Class;
-		[Embed(source="data/can_lab02_360x240.png")] protected var CanadaBackground:Class;
+		[Embed(source="data/Levels/background.png")] protected var LevelBackground:Class;
+		
+		[Embed(source="data/Levels/tv_canada.png")] protected var CanadaFlag:Class;
+		[Embed(source="data/Levels/tv_russia.png")] protected var RussiaFlag:Class;
+		[Embed(source="data/Levels/tv_japan.png")] protected var JapanFlag:Class;
+		[Embed(source="data/Levels/tv_usa.png")] protected var UsaFlag:Class;
+		[Embed(source="data/Levels/tv_germany.png")] protected var GermanyFlag:Class;
 		
 		[Embed(source="data/Fonts/slkscr.ttf", fontFamily="SilkScreen", embedAsCFF="false")] private var _FontSilkScreen:String;
 		
@@ -42,34 +47,37 @@ package
 				FlxG.addPlugin(new FlxMouseControl);
 			}
 			
-			// Set the background colour to light grey
-			FlxG.bgColor = 0xffeeeeee;
-			
 			FlxG.mouse.show();
 			
+			// Load the 'background.png' art asset as the background image for the level
 			background = new FlxSprite(0, 0);
-			
-			if (FlxG.level == 0) {
-				background.loadGraphic(CanadaBackground, false, false, 360, 240);
-			} else if (FlxG.level == 1) {
-				background.loadGraphic(CanadaBackground, false, false, 360, 240);
-			} else if (FlxG.level == 2) {
-				background.loadGraphic(JapanBackground, false, false, 360, 240);
-			} else if (FlxG.level == 3) {
-				background.loadGraphic(JapanBackground, false, false, 360, 240);
-			} else if (FlxG.level == 4) {
-				background.loadGraphic(JapanBackground, false, false, 360, 240);
-			}
+			background.loadGraphic(LevelBackground, false, false, 360, 240);
 			add(background);
 			
-			//board = new FlxSprite(BOARDX, BOARDY);
-			//board.makeGraphic(125, 175, 0xffafb8c2);
-			//add(board);
+			// Displays the nationality's flag on their television
+			tvFlag = new FlxSprite(7, 71);
 			
+			if (FlxG.level == 0) {
+				tvFlag.loadGraphic(CanadaFlag, false, false);
+			} else if (FlxG.level == 1) {
+				tvFlag.loadGraphic(RussiaFlag, false, false);
+			} else if (FlxG.level == 2) {
+				tvFlag.loadGraphic(JapanFlag, false, false);
+			} else if (FlxG.level == 3) {
+				tvFlag.loadGraphic(UsaFlag, false, false);
+			} else if (FlxG.level == 4) {
+				tvFlag.loadGraphic(GermanyFlag, false, false);
+			}
+			
+			tvFlag.alpha = 0.3;
+			add(tvFlag);
+			
+			// Set initial value for the level's countdown timer, starting at 5:00
 			timerText = new FlxText(3, 4, 200, "5:00", true);
 			timerText.setFormat("Silkscreen", 17, 0xffffffff, "left");
 			add(timerText);
 			
+			// Set initial value for the level's score
 			scoreText = new FlxText(77, 4, 200, ("" + _levelScore), true);
 			scoreText.setFormat("Silkscreen", 17, 0xffffffff, "left");
 			add(scoreText);
@@ -380,6 +388,20 @@ package
 		
 		private function gridCheck():void
 		{
+			for (var colNum:int = 0; colNum <= 5; colNum++) {
+				for (var rowNum:int = 0; rowNum <= 6; rowNum++) {			
+					if (piecesArray[colNum][rowNum].exists == false) {
+						
+						for (var aboveRows:int = rowNum-1; aboveRows >= 0; aboveRows--) {
+							piecesArray[colNum][aboveRows+1] = piecesArray[colNum][aboveRows];
+							TweenLite.to(piecesArray[colNum][aboveRows], 0.5, {x: piecesArray[colNum][aboveRows].x, y: piecesArray[colNum][aboveRows].y+25, ease:Bounce.easeOut});
+						}
+						
+					}
+				}
+			}
+			
+			/*
 			for (var rowNum:int = 6; rowNum >= 0; rowNum--) {
 				for (var colNum:int = 5; colNum >= 0; colNum--) {
 					if (piecesArray[colNum][rowNum].exists == false) {
@@ -479,7 +501,7 @@ package
 						
 					}
 				}
-			}
+			}*/
 		}
 		
 		public function runTime():void

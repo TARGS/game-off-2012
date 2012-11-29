@@ -6,8 +6,6 @@ package
 	{
 		public var _graphic:int;
 		
-		[Embed(source="data/background.png")] protected var ImgBackground:Class;
-		
 		// Sprites for Game Pieces
 		[Embed(source="data/Pieces/puzpiece_battery_25px.png")] protected var ImgBattery:Class;
 		[Embed(source="data/Pieces/puzpiece_chip_25px.png")] protected var ImgChip:Class;
