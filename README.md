@@ -33,7 +33,7 @@ Design:
 
 ## Open Source
 
-In developing our game, we utilized [Flixel](http://flixel.org/), an open source Flash game-making library, and [TweenLite](https://www.greensock.com/tweenlite/) from Greensock for the animations.
+In developing our game, we utilized [Flixel](http://flixel.org/), an open source Flash game-making library, and [TweenLite](https://www.greensock.com/tweenlite/) from Greensock for the animations. Early pixel art was created in []Pixen](http://pixenapp.com).
 
 ## Screenshots
 
