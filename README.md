@@ -1,3 +1,5 @@
+![](http://i.imgur.com/2LgZQ.png)
+
 # "Octocat Attacks" - Our Match-3 Game
 
 For [GitHub Game Off](https://github.com/blog/1303-github-game-off), we decided to build a match-3 style puzzle game using Flash, as it was the fastest way to get up and running and working on the game.
