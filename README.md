@@ -1,6 +1,6 @@
-# The Match-3 Game
+# "Octocat Attacks" - Our Match-3 Game
 
-For GitHub Game Off, we decided to build a match-3 style puzzle game using Flash, as it was the fastest way to get up and running and working on the game.
+For [GitHub Game Off](https://github.com/blog/1303-github-game-off), we decided to build a match-3 style puzzle game using Flash, as it was the fastest way to get up and running and working on the game.
 
 ## The Game Concept
 
@@ -13,10 +13,10 @@ The game follows each country's attempt to develop said branch of robot, and the
 ## The Team
 
 **[Jon Lim](https://github.com/JonLim)** - [@jonlim](https://twitter.com/jonlim)  
-Coding and Development
+**Coding and Development**
 
 **[Wayne Sang](https://github.com/Barnahog)** - [@waynesang](https://twitter.com/waynesang)  
-Art and Design
+**Art and Design**
 
 ## Technical Aspects
 
