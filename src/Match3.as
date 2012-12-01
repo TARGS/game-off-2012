@@ -8,7 +8,7 @@ package
 	{
 		public function Match3()
 		{
-			super(360, 240, MenuState, 2);
+			super(360, 240, TitleState, 2);
 			forceDebugger = true;
 		}
 	}
